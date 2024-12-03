@@ -1,33 +1,32 @@
 from random import randint
+
 import requests
+
 
 class Pokemon:
     pokemons = {}
     # Инициализация объекта (конструктор)
-    def __init__(self, pokemon_trainer, pokemon_trainer_id):
+    def __init__(self, pokemon_trainer):
 
         self.pokemon_trainer = pokemon_trainer   
 
         self.pokemon_number = randint(1,1000)
         self.img = self.get_img()
         self.name = self.get_name()
-        self.level = self.get_level()
-        self.pokemon_trainer_id = pokemon_trainer_id
-        
-
-
+        self.hp = randint(200 ,400)
+        self.power = randint(30 ,60)
         Pokemon.pokemons[pokemon_trainer] = self
 
     # Метод для получения картинки покемона через API
     def get_img(self):
-        url = f"https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}"  
+        url = f'https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}'
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()
-            return (data['sprites']['other']["official-artwork"]["front_default"])
+            return (data['sprites']['other']['official-artwork']['front_default'])
         else:
-            return "https://www.google.com/imgres?q=pokemon&imgurl=https%3A%2F%2Fcdn.pixabay.com%2Fphoto%2F2021%2F12%2F26%2F17%2F31%2Fpokemon-6895600_1280.png&imgrefurl=https%3A%2F%2Fpixabay.com%2Fit%2Fimages%2Fsearch%2Fpok%25C3%25A9mon%2520vai%2F&docid=WWYqmh1yECd_qM&tbnid=sRHHBuRnPjqtSM&vet=12ahUKEwi9kqq4rvqJAxUElf0HHZBiIhUQM3oFCIABEAA..i&w=1280&h=1280&hcb=2&ved=2ahUKEwi9kqq4rvqJAxUElf0HHZBiIhUQM3oFCIABEAA"
-    
+            return "https://static.wikia.nocookie.net/pokemon/images/0/0d/025Pikachu.png/revision/latest/scale-to-width-down/1000?cb=20181020165701&path-prefix=ru"
+
     # Метод для получения имени покемона через API
     def get_name(self):
         url = f'https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}'
@@ -41,23 +40,58 @@ class Pokemon:
 
     # Метод класса для получения информации
     def info(self):
-        return f"Имя твоего покеомона: {self.name} \n Trainer's name is {self.pokemon_trainer} \n Trainer's id is {self.pokemon_trainer_id}"
+        return f"Hp = {self.hp}\nPower = {self.power}\nName = {self.name}"
+        
 
     # Метод класса для получения картинки покемона
     def show_img(self):
         return self.img
     
-    
-    def get_level(self):
-        url = f'https://pokeapi.co/api/v2/pokemon/{self.pokemon_number}'
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            return (data['moves'][0]['version_group_details'][0]["level_learned_at"])
+    def attack(self, enemy):
+        if isinstance(enemy, Wizard): 
+            chanche = randint(1,5)
+            if chanche == 1:
+                return  " Pokemnon wizard used a shield"
+        if enemy.hp > self.power:
+            self.power = randint(30, 60)
+            enemy.hp -= self.power
+            return f"{self.name} нанес {self.power} урона {enemy.name}"
         else:
-            return "Pikachu"
+            enemy.hp = 0
+            return f" {self.name} victory against {enemy.name}"
+        
+class Wizard(Pokemon):
+    
+    def info(self):
+        return f"You got a pokemon wizard with " + super().info()
+
+    
+class Fighter(Pokemon):
+    
+    
+    
+    def attack(self,enemy):
+        superpower = randint(5,15)
+        self.power += superpower
+        result = super().attack(enemy)
+        self.power -= superpower
+        return result + f"\n Fighter use a super power attack:{superpower}"
+    
+    def info(self):
+        return f"You got a pokemon fighter with " + super().info()
+    
+    
+if __name__ == '__main__':
+    wizard = Wizard("username1")
+    fighter = Fighter("username2")
+
+    print(wizard.info())
+    print()
+    print(fighter.info())
+    print()
+    print(fighter.attack(wizard))
+
         
     
-
-
-
+    
+    

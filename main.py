@@ -40,6 +40,10 @@ def attack(message):
     else:
             bot.send_message(message.chat.id, "Ты не ответил на сообщение")
                      
-
+@bot.message_handler(commands=['info'])
+def info(message):
+    if message.from_user.username in Pokemon.pokemons.keys():
+        pok = Pokemon.pokemons[message.from_user.username]
+        bot.send_message(message.chat.id, pok.info())    
 
 bot.infinity_polling(none_stop=True)

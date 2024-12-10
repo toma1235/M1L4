@@ -46,4 +46,14 @@ def info(message):
         pok = Pokemon.pokemons[message.from_user.username]
         bot.send_message(message.chat.id, pok.info())    
 
+
+@bot.message_handler(commands=['feed'])
+def feed(message):
+    if message.from_user.username in Pokemon.pokemons.keys():
+        pok= Pokemon.pokemons[message.from_user.username]
+        bot.send_message(message.chat.id, pok.feed())
+    else:
+        bot.send_message(message.chat.id, "Ты не создал себе покемона")
+
+
 bot.infinity_polling(none_stop=True)
